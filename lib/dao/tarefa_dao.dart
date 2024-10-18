@@ -43,15 +43,16 @@ class TarefaDao {
   // Função responsável por criar a tabela 'tarefas' no banco de dados
   Future _createDB(Database db, int version) async {
     // Comando SQL para criar a tabela 'tarefas' com suas colunas e tipos de dados
+    //unica alteração foi a remoçãod os comentarios do comando SQL
     await db.execute('''
       CREATE TABLE tarefas (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,  // Chave primária auto-incrementada
-        tipo TEXT,                             // Coluna 'tipo' para armazenar o tipo de tarefa
-        titulo TEXT,                           // Coluna 'titulo' para armazenar o título da tarefa
-        periodo TEXT,                          // Coluna 'periodo' para armazenar o período da tarefa
-        peso REAL,                             // Coluna 'peso' para armazenar o peso da tarefa
-        nota REAL,                             // Coluna 'nota' para armazenar a nota atribuída à tarefa
-        timestamp TEXT                         // Coluna 'timestamp' para armazenar a data/hora
+        id INTEGER PRIMARY KEY AUTOINCREMENT,  
+        tipo TEXT,                             
+        titulo TEXT,                           
+        periodo TEXT,                          
+        peso REAL,                             
+        nota REAL,                             
+        timestamp TEXT                         
       )
     ''');
   }
@@ -61,6 +62,7 @@ class TarefaDao {
     // Obtém a instância do banco de dados
     final db = await instance.database;
     // Insere a tarefa convertida em JSON na tabela 'tarefas'
+    print(tarefa.toJson());
     await db.insert('tarefas', tarefa.toJson());
   }
 
