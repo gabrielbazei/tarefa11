@@ -61,9 +61,16 @@ class TarefaDao {
   Future<void> inserirTarefa(Tarefa tarefa) async {
     // Obtém a instância do banco de dados
     final db = await instance.database;
+
+    // Atribuir um valor padrão se a nota for nula
+    tarefa.nota ??= 0.0; // Define 0.0 se a nota for nula
+    tarefa.timestamp ??= DateTime.now(); // Define o timestamp atual se for nulo
+
     // Insere a tarefa convertida em JSON na tabela 'tarefas'
-    print(tarefa.toJson());
-    await db.insert('tarefas', tarefa.toJson());
+    await db.insert(
+      'tarefas',
+      tarefa.toJson(),
+    );
   }
 
   // Função para listar todas as tarefas armazenadas no banco de dados
@@ -73,6 +80,7 @@ class TarefaDao {
     // Consulta todos os registros da tabela 'tarefas'
     final result = await db.query('tarefas');
     // Converte cada registro em um objeto Tarefa e retorna a lista de tarefas
-    return result.map((json) => Tarefa.fromJson(json)).toList();
+    List<Tarefa> t = result.map((json) => Tarefa.fromJson(json)).toList();
+    return t;
   }
 }

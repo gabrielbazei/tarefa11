@@ -10,22 +10,30 @@ class TarefaPresenter {
 
   // Carregar JSON trasnformando em uma lista de tarefas
   Future<List<Tarefa>> carregarTarefas() async {
-    final jsonString = await rootBundle.loadString('assets/notas.json');
-    final List<dynamic> jsonData = json.decode(jsonString);
-    return jsonData.map((item) => Tarefa.fromJson(item)).toList();
-  }
+    List<Tarefa> tarefas = await db.listarTarefas();
 
-  // Calcular a nota final
-  double calcularNotaFinal(List<Tarefa> tarefas) {
-    return 0;
-  }
-
-  // Salvar notas no banco
-  Future<void> salvarTarefas(List<Tarefa> tarefas) async {
-    for (var tarefa in tarefas) {
-      tarefa.timestamp = DateTime.now();
-      await db.inserirTarefa(tarefa);
+    // Se não houver tarefas, carrega do JSON
+    if (tarefas.isEmpty) {
+      print("Banco de dados limpo");
+      final jsonString = await rootBundle.loadString('assets/notas.json');
+      final List<dynamic> jsonData = json.decode(jsonString);
+      tarefas = jsonData.map((item) => Tarefa.fromJson(item)).toList();
+    } else {
+      print(
+          "puxou informações do banco, estas foram as informações que vieram do banco: ");
+      for (Tarefa t in tarefas) {
+        print(t.toJson());
+      }
     }
+    return tarefas;
+  }
+
+  Future<List<Tarefa>> salvarTarefas(List<Tarefa> tarefas) async {
+    for (Tarefa tarefa in tarefas) {
+      tarefa.timestamp = DateTime.now(); // Define o timestamp atual
+      await db.inserirTarefa(tarefa); // Insere a tarefa no banco de dados
+    }
+    return await db.listarTarefas();
   }
 
   //Função adicionada, responsavel por porcurar a tarefa deseajda
@@ -44,5 +52,15 @@ class TarefaPresenter {
         .toList();
     // Retorna a lista de tarefas filtradas (pode estar vazia se não houver resultados)
     return resultado;
+  }
+
+  Future<List<String>> inicializaNotas(
+      Future<List<Tarefa>> tarefasFuture) async {
+    List<Tarefa> tarefas = await tarefasFuture;
+    List<String> notas = [];
+    for (Tarefa temp in tarefas) {
+      notas.add(temp.nota.toString());
+    }
+    return notas;
   }
 }

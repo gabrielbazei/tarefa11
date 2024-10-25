@@ -21,6 +21,12 @@ class Tarefa {
       titulo: json['titulo'],
       periodo: json['periodo'],
       peso: json['peso'].toDouble(),
+      nota: json['nota'] != null
+          ? json['nota'].toDouble()
+          : null, // Mantém nulo se não estiver presente
+      timestamp: json['timestamp'] != null
+          ? DateTime.parse(json['timestamp'])
+          : null, // Mantém nulo se não estiver presente
     );
   }
 
